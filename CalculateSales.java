@@ -23,6 +23,12 @@ public class CalculateSales extends Exception {
 	public static String outputs = null;
 
 	public static void main(String[] args) {
+		
+
+		if (args.length != 1){
+		    System.out.println("予期せぬエラーが発生しました");
+		    return;
+		}
 
 		File file = new File(args[0] + "branch.lst");
 
@@ -55,6 +61,7 @@ public class CalculateSales extends Exception {
 
 		} catch (IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
+			return;
 
 		} finally {
 			try {
@@ -62,7 +69,8 @@ public class CalculateSales extends Exception {
 					br.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("予期せぬエラーが発生しました");
+				return;
 			}
 		}
 
@@ -136,12 +144,20 @@ public class CalculateSales extends Exception {
 
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
+				return;
+			
+			} finally {
+				try {
+					if (br != null) {
+					br.close();
+					}
+				} catch (IOException e) {
+					System.out.println("予期せぬエラーが発生しました");
 			}
 
-
-			if (args.length != 1){
-			    System.out.println("予期せぬエラーが発生しました");
-			    return;
+			if(InfoList.size() != 3) {
+				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です" + InfoList.size());
+				return;
 			}
 
 			if(!branchSales.containsKey(InfoList.get(0))) {
@@ -154,15 +170,6 @@ public class CalculateSales extends Exception {
 				return;
 			}
 
-			if(InfoList.size() != 3) {
-				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です" + InfoList.size());
-				return;
-			}
-
-			if(InfoList.size() != 3) {
-				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です" + InfoList.size());
-				return;
-			}
 
 			long infoSal = Long.parseLong(InfoList.get(2));
 			String infoBranch = InfoList.get(0);
@@ -177,7 +184,8 @@ public class CalculateSales extends Exception {
 			if(branchSales.get(infoBranch) > 9999999999L || commoditySales.get(infoCommodity) > 9999999999L) {
 			System.out.println("合計金額が10桁を超えました");
 			return;
-
+			
+		
 
 			}
 		}
@@ -190,6 +198,7 @@ public class CalculateSales extends Exception {
 			hogeSales = commoditySales;
 			hogeMap = commodityMap;
 			fileWriting(fileName,hogeSales,hogeMap);
+		}
 	}
 
 
@@ -225,7 +234,6 @@ public class CalculateSales extends Exception {
 					bw.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
 				System.out.println("予期せぬエラーが発生しました");
 			}
 		}
