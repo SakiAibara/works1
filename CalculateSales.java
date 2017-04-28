@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 public class CalculateSales extends Exception {
 	public static void main(String[] args) {
+		
 		File file = new File(args[0] + "branch.lst");
 
 		HashMap<String, String> branchMap = new HashMap<String, String>();
@@ -44,9 +45,8 @@ public class CalculateSales extends Exception {
 		} catch (IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
 		}
+		
 
-
-// 問2
 		File file2 = new File(args[0] + "commodity.lst");
 
 		HashMap<String, String> commodityMap = new HashMap<String, String>();
@@ -76,13 +76,11 @@ public class CalculateSales extends Exception {
 			System.out.println("予期せぬエラーが発生しました");
 		}
 
-		// 問3
+		
 		File sales = new File(args[0]);
-//		String[] fileList = sales.list();
 
 		File[] dirLists = sales.listFiles();
 
-		//ArrayList<String> FileList = new ArrayList<String>();
 		ArrayList<File> rcdList = new ArrayList<File>();
 
 		for (File rcdFile : dirLists) {
@@ -93,17 +91,11 @@ public class CalculateSales extends Exception {
 			}
 		}
 
-//		System.out.println(rcdList);
-
-//		System.out.println(rcdList.get(0).getName().substring(0,8));
-
 		for (int i = 0; i < rcdList.size(); i++) {
 			File file3 = rcdList.get(i);
-//			System.out.println(file3); // イテレータでリスト化
 
 
 			int rcdNumber = Integer.parseInt(rcdList.get(i).getName().substring(0,8));
-//			System.out.println(rcdNumber);
 
 			if(rcdNumber != i+1){
 				System.out.println("売上ファイル名が連番になっていません");
@@ -114,13 +106,12 @@ public class CalculateSales extends Exception {
 
 			try {
 
-				FileReader fr = new FileReader(file3); // ふぁいるよみこみ
-				BufferedReader br = new BufferedReader(fr); // ばっふぁ
+				FileReader fr = new FileReader(file3);
+				BufferedReader br = new BufferedReader(fr);
 
 				String ss;
-				while ((ss = br.readLine()) != null) { // なくなるまで読み出す
+				while ((ss = br.readLine()) != null) {
 					InfoList.add(ss);
-//					System.out.println(ss);
 			}
 
 			} catch (IOException e) {
@@ -139,13 +130,13 @@ public class CalculateSales extends Exception {
 			}
 
 			if(InfoList.size() != 3) {
-				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です 要素数:" + InfoList.size());
+				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です" + InfoList.size());
 				return;
 			}
 
 			long infoSal = Long.parseLong(InfoList.get(2));
-			String infoBranch = InfoList.get(0);     //支店no.
-			String infoCommodity = InfoList.get(1);     //商品no.
+			String infoBranch = InfoList.get(0);
+			String infoCommodity = InfoList.get(1);
 
 			long totalSalesB = (branchSales.get(infoBranch)) + infoSal;
 			long totalSalesC = (commoditySales.get(infoCommodity)) + infoSal;
@@ -158,57 +149,49 @@ public class CalculateSales extends Exception {
 			return;
 			}
 
-//			System.out.println("店舗" + branchMap.get(InfoList.get(0)) + "に追加、ただいまの合計" + branchSales.get(infoBranch));
-//			System.out.println("商品" + commodityMap.get(InfoList.get(1)) + "に追加、ただいまの合計" + commoditySales.get(infoCommodity));
 
 		}
 
-		//ファイル作成
 		try{
 			File bo = new File(args[0] + "branch.out");
 			FileWriter fw = new FileWriter(bo);
 			BufferedWriter bw = new BufferedWriter(fw);
 
-			//支店出力
 			List<Map.Entry<String,Long>> array = new ArrayList<Map.Entry<String,Long>>(branchSales.entrySet());
 			Collections.sort(array, new Comparator<Map.Entry<String,Long>>(){
 
 				public int compare(
 					Entry<String,Long> entry1, Entry<String,Long> entry2) {
-					return ((Long)entry2.getValue()).compareTo((Long)entry1.getValue()); //オーバーライド
+					return ((Long)entry2.getValue()).compareTo((Long)entry1.getValue());
 					}
 				});
 
 			for (Entry<String,Long> s : array) {
-//				System.out.println(s.getKey() +","+ branchMap.get(s.getKey()) +","+ s.getValue());
 
 				bw.write(s.getKey() +","+ branchMap.get(s.getKey()) +","+ s.getValue() + "\n");
 			}
 			bw.close();
 
-				//商品出力
+			
 				File co = new File(args[0] + "commodity.out");
 				FileWriter fw2 = new FileWriter(co);
-				BufferedWriter bw2 = new BufferedWriter(fw2);   //ここ再び宣言する？
+				BufferedWriter bw2 = new BufferedWriter(fw2);
 
 				List<Entry<String,Long>> array2 = new ArrayList<Map.Entry<String,Long>>(commoditySales.entrySet());
-				Collections.sort(array2, new Comparator<Map.Entry<String,Long>>(){   //.reverseOrder());
+				Collections.sort(array2, new Comparator<Map.Entry<String,Long>>(){
 
 					public int compare(
 						Entry<String,Long> entry3, Entry<String,Long> entry4) {
-						return ((Long)entry4.getValue()).compareTo((Long)entry3.getValue()); //オーバーライド
+						return ((Long)entry4.getValue()).compareTo((Long)entry3.getValue());
 						}
 					});
 
 			for (Entry<String,Long> sc : array2) {
-//					System.out.println(sc.getKey() +","+ commodityMap.get(sc.getKey()) +","+ sc.getValue());
 
 				bw2.write(sc.getKey() +","+ commodityMap.get(sc.getKey()) +","+ sc.getValue() + "\n");
 
 			}
 			bw2.close();
-
-			System.out.println("集計結果を出力しました");
 
 		} catch (IOException e) {
 			System.out.println("予期せぬエラーが発生しました" + e);
