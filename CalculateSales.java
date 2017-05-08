@@ -23,7 +23,7 @@ public class CalculateSales extends Exception {
 	public static String outputs = null;
 
 	public static void main(String[] args) {
-		
+
 
 		if (args.length != 1){
 		    System.out.println("予期せぬエラーが発生しました");
@@ -34,12 +34,12 @@ public class CalculateSales extends Exception {
 
 		FileReader fr = null;
 		BufferedReader br = null;
-		
+
 		if(!file.exists()) {
 			System.out.println("支店定義ファイルが存在しません");
 			return;
 		}
-		
+
 		try {
 			fr = new FileReader(file);
 			br = new BufferedReader(fr);
@@ -51,7 +51,7 @@ public class CalculateSales extends Exception {
 					branchMap.put(items[0], items[1]);
 					branchSales.put(items[0], 0L);
 
-				
+
 
 				} else {
 					System.out.println("支店定義ファイルのフォーマットが不正です");
@@ -76,7 +76,7 @@ public class CalculateSales extends Exception {
 
 
 		File file2 = new File(args[0] + "commodity.lst");
-		
+
 		if(!file2.exists()) {
 			System.out.println("商品定義ファイルが存在しません");
 			return;
@@ -145,7 +145,7 @@ public class CalculateSales extends Exception {
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
-			
+
 			} finally {
 				try {
 					if (br != null) {
@@ -184,30 +184,33 @@ public class CalculateSales extends Exception {
 			if(branchSales.get(infoBranch) > 9999999999L || commoditySales.get(infoCommodity) > 9999999999L) {
 			System.out.println("合計金額が10桁を超えました");
 			return;
-			
-		
+
+
 
 			}
 		}
-			String fileName = args[0] + "\\branch.out";
+
+			String dirPath = args[0];
+
+			String fileName = "\\branch.out";
 			HashMap<String, Long> hogeSales = branchSales;
 			HashMap<String, String> hogeMap = branchMap;
-			fileWriting(fileName,hogeSales,hogeMap);
+			fileWriting(dirPath,fileName,hogeSales,hogeMap);
 
-			fileName = args[0] + "\\commodity.out";
+			fileName = "\\commodity.out";
 			hogeSales = commoditySales;
 			hogeMap = commodityMap;
-			fileWriting(fileName,hogeSales,hogeMap);
+			fileWriting(dirPath,fileName,hogeSales,hogeMap);
 		}
 	}
 
-
-	public static void fileWriting(String output, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
+	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
 
 		BufferedWriter bw =null;
 
 		try{
-			File bo = new File(output);
+
+			File bo = new File(dirPath + fileName);
 			bw = new BufferedWriter(new FileWriter(bo));
 
 			List<Map.Entry<String,Long>> array = new ArrayList<Map.Entry<String,Long>>(hogeSales.entrySet());
@@ -226,16 +229,20 @@ public class CalculateSales extends Exception {
 
 		} catch (IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
-			return;
+			return false;
 
 		} finally {
 			try {
 				if (bw != null) {
 					bw.close();
+					return true;
 				}
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
+				return false;
 			}
 		}
+		return false;
+
 	}
 }
