@@ -37,7 +37,6 @@ public class CalculateSales extends Exception {
 		//支店読み出し
 		//商品読み出し
 		if(!fileReading(dirPath, "branch.lst", "^[0-9]{3}$", branchSales, branchMap, "支店") || !fileReading(dirPath, "commodity.lst","^[0-9a-zA-Z]{8}$", commoditySales, commodityMap,"商品")) {
-			System.out.println(fileReading(dirPath, "branch.lst", "^[0-9]{3}$", branchSales, branchMap, "支店"));
 			return;
 		}
 
