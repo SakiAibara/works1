@@ -36,20 +36,16 @@ public class CalculateSales extends Exception {
 		String dirPath = args[0];
 		String fileName = "branch.lst";
 		String itemForm = "^[0-9]{3}$";
-		HashMap<String, Long> hogeSales = branchSales;
-		HashMap<String, String> hogeMap = branchMap;
 		String errorMessage = "支店定義ファイルが存在しません";
 		String errorMessage2 = "支店定義ファイルのフォーマットが不正です";
 
 		//商品読み出し
 		String fileName2 = "commodity.lst";
 		String itemForm2 = "^[0-9A-Z]{8}$";
-		HashMap<String, Long> hogeSales2 = commoditySales;
-		HashMap<String, String> hogeMap2 = commodityMap;
 		String errorMessage3 = "商品定義ファイルが存在しません";
 		String errorMessage4 = "商品定義ファイルのフォーマットが不正です";
 
-		if(!fileReading(dirPath, fileName, itemForm, hogeSales, hogeMap, errorMessage, errorMessage2) || !fileReading(dirPath, fileName2, itemForm2, hogeSales2, hogeMap2, errorMessage3, errorMessage4)) {
+		if(!fileReading(dirPath, fileName, itemForm, branchSales, branchMap, errorMessage, errorMessage2) || !fileReading(dirPath, fileName2, itemForm2, commoditySales, commodityMap, errorMessage3, errorMessage4)) {
 			return;
 		}
 
@@ -148,12 +144,12 @@ public class CalculateSales extends Exception {
 			String fileName3 = "branch.out";
 			String fileName4 = "commodity.out";
 
-			if(!fileWriting(dirPath,fileName3,hogeSales,hogeMap) || !fileWriting(dirPath,fileName4,hogeSales2,hogeMap2)) {
+			if(!fileWriting(dirPath,fileName3,branchSales,branchMap) || !fileWriting(dirPath,fileName4,commoditySales,commodityMap)) {
 				return;
 			}
 		}
 
-	public static boolean fileReading(String dirPath, String fileName, String itemForm, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap, String notfoundError, String formatError) {
+	public static boolean fileReading(String dirPath, String fileName, String itemForm, HashMap<String, Long> bcSales, HashMap<String, String> bcMap, String notfoundError, String formatError) {
 
 		File file = new File(dirPath,fileName);
 
@@ -169,9 +165,9 @@ public class CalculateSales extends Exception {
 			String s;
 			while ((s = br.readLine()) != null) {
 				String[] items = s.split(",");
-				if (items[0].matches(itemForm) && items.length == 2) {
-					hogeMap.put(items[0], items[1]);
-					hogeSales.put(items[0], 0L);
+				if (items.length == 2 && items[0].matches(itemForm)) {
+					bcMap.put(items[0], items[1]);
+					bcSales.put(items[0], 0L);
 
 				} else {
 					System.out.println(formatError);
@@ -196,7 +192,7 @@ public class CalculateSales extends Exception {
 		return true;
 	}
 
-	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
+	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> bcSales, HashMap<String, String> bcMap) {
 
 		BufferedWriter bw = null;
 
@@ -205,7 +201,7 @@ public class CalculateSales extends Exception {
 			File bo = new File(dirPath,fileName);
 			bw = new BufferedWriter(new FileWriter(bo));
 
-			List<Map.Entry<String,Long>> array = new ArrayList<Map.Entry<String,Long>>(hogeSales.entrySet());
+			List<Map.Entry<String,Long>> array = new ArrayList<Map.Entry<String,Long>>(bcSales.entrySet());
 			Collections.sort(array, new Comparator<Map.Entry<String,Long>>(){
 
 				public int compare(
@@ -216,7 +212,7 @@ public class CalculateSales extends Exception {
 
 			for (Entry<String,Long> s : array) {
 
-				bw.write(s.getKey() +","+ hogeMap.get(s.getKey()) +","+ s.getValue() + "\n");
+				bw.write(s.getKey() +","+ bcMap.get(s.getKey()) +","+ s.getValue() + "\n");
 			}
 
 		} catch (IOException e) {
