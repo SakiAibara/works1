@@ -51,8 +51,6 @@ public class CalculateSales extends Exception {
 					branchMap.put(items[0], items[1]);
 					branchSales.put(items[0], 0L);
 
-
-
 				} else {
 					System.out.println("支店定義ファイルのフォーマットが不正です");
 					return;
@@ -114,11 +112,11 @@ public class CalculateSales extends Exception {
 		ArrayList<File> rcdList = new ArrayList<File>();
 
 		for (File rcdFile : dirLists) {
-			if (rcdFile.getName().matches("^\\d{8}.rcd")) {
+			if (rcdFile.isFile() && rcdFile.getName().matches("^\\d{8}.rcd")) {
 				rcdList.add(rcdFile);
 			}
 		}
-		
+
 		for (int i = 0; i < rcdList.size(); i++) {
 			int rcdNumber = Integer.parseInt(rcdList.get(i).getName().substring(0,8));
 
@@ -129,9 +127,9 @@ public class CalculateSales extends Exception {
 		}
 
 		for (int i = 0; i < rcdList.size(); i++) {
-			
+
 			File file3 = rcdList.get(i);
-			
+
 			ArrayList<String> InfoList = new ArrayList<String>();
 
 			try {
@@ -177,7 +175,7 @@ public class CalculateSales extends Exception {
 				Long.parseLong(InfoList.get(2));
 
 			} catch (NumberFormatException e) {
-				System.out.println(rcdList.get(i).getName()+"予期せぬエラーが発生しました");
+				System.out.println("予期せぬエラーが発生しました");
 				return;
 			}
 
@@ -213,7 +211,7 @@ public class CalculateSales extends Exception {
 			}
 		}
 
-	
+
 	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
 
 		BufferedWriter bw = null;
