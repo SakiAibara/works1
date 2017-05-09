@@ -21,6 +21,8 @@ public class CalculateSales extends Exception {
 	public static HashMap<String, String> commodityMap = new HashMap<String, String>();
 	public static HashMap<String, Long> commoditySales = new HashMap<String, Long>();
 	public static String outputs = null;
+	public static FileReader fr = null;
+	public static BufferedReader br = null;
 
 	public static void main(String[] args) {
 
@@ -30,78 +32,25 @@ public class CalculateSales extends Exception {
 		    return;
 		}
 
-		File file = new File(args[0],"branch.lst");
+		//支店読み出し
+		String dirPath = args[0];
+		String fileName = "branch.lst";
+		String itemForm = "^[0-9]{3}$";
+		HashMap<String, Long> hogeSales = branchSales;
+		HashMap<String, String> hogeMap = branchMap;
+		String errorMessage = "支店定義ファイルが存在しません";
+		String errorMessage2 = "支店定義ファイルのフォーマットが不正です";
 
-		FileReader fr = null;
-		BufferedReader br = null;
-
-		if(!file.exists()) {
-			System.out.println("支店定義ファイルが存在しません");
+		//商品読み出し
+		String fileName2 = "commodity.lst";
+		String itemForm2 = "^[0-9A-Z]{8}$";
+		HashMap<String, Long> hogeSales2 = commoditySales;
+		HashMap<String, String> hogeMap2 = commodityMap;
+		String errorMessage3 = "商品定義ファイルが存在しません";
+		String errorMessage4 = "商品定義ファイルのフォーマットが不正です";
+		
+		if(!fileReading(dirPath, fileName, itemForm, hogeSales, hogeMap, errorMessage, errorMessage2) || !fileReading(dirPath, fileName2, itemForm2, hogeSales2, hogeMap2, errorMessage3, errorMessage4)) {
 			return;
-		}
-
-		try {
-			fr = new FileReader(file);
-			br = new BufferedReader(fr);
-
-			String s;
-			while ((s = br.readLine()) != null) {
-				String[] items = s.split(",");
-				if (items[0].matches("^[0-9]{3}$") && items.length == 2) {
-					branchMap.put(items[0], items[1]);
-					branchSales.put(items[0], 0L);
-
-				} else {
-					System.out.println("支店定義ファイルのフォーマットが不正です");
-					return;
-				}
-			}
-
-		} catch (IOException e) {
-			System.out.println("予期せぬエラーが発生しました");
-			return;
-
-		} finally {
-			try {
-				if (br != null) {
-					br.close();
-				}
-			} catch (IOException e) {
-				System.out.println("予期せぬエラーが発生しました");
-				return;
-			}
-		}
-
-
-		File file2 = new File(args[0],"commodity.lst");
-
-		if(!file2.exists()) {
-			System.out.println("商品定義ファイルが存在しません");
-			return;
-		}
-
-
-		try {
-
-			fr = new FileReader(file2);
-			br = new BufferedReader(fr);
-
-			String s2;
-			while ((s2 = br.readLine()) != null) {
-				String[] items = s2.split(",");
-
-				if (items[0].matches("^[0-9A-Z]{8}$") && items.length == 2) {
-					commodityMap.put(items[0], items[1]);
-					commoditySales.put(items[0], 0L);
-
-				} else {
-					System.out.println("商品定義ファイルのフォーマットが不正です");
-					return;
-				}
-			}
-
-		} catch (IOException e) {
-			System.out.println("予期せぬエラーが発生しました");
 		}
 
 
@@ -128,13 +77,12 @@ public class CalculateSales extends Exception {
 
 		for (int i = 0; i < rcdList.size(); i++) {
 
-			File file3 = rcdList.get(i);
+			File files = rcdList.get(i);
 
 			ArrayList<String> InfoList = new ArrayList<String>();
 
 			try {
-
-				fr = new FileReader(file3);
+				fr = new FileReader(files);
 				br = new BufferedReader(fr);
 
 				String ss;
@@ -196,21 +144,57 @@ public class CalculateSales extends Exception {
 			}
 		}
 
-			String dirPath = args[0];
+		//書き出し
+			String fileName3 = "branch.out";
+			String fileName4 = "commodity.out";
 
-			String fileName = "branch.out";
-			HashMap<String, Long> hogeSales = branchSales;
-			HashMap<String, String> hogeMap = branchMap;
-
-			String fileName2 = "commodity.out";
-			HashMap<String, Long> hogeSales2 = commoditySales;
-			HashMap<String, String> hogeMap2 = commodityMap;
-
-			if(!fileWriting(dirPath,fileName,hogeSales,hogeMap) || !fileWriting(dirPath,fileName2,hogeSales2,hogeMap2)) {
+			if(!fileWriting(dirPath,fileName3,hogeSales,hogeMap) || !fileWriting(dirPath,fileName4,hogeSales2,hogeMap2)) {
 				return;
 			}
 		}
 
+	public static boolean fileReading(String dirPath, String fileName, String itemForm, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap, String notfoundError, String formatError) {
+
+		File file = new File(dirPath,fileName);
+
+		if(!file.exists()) {
+			System.out.println(notfoundError);
+			return false;
+		}
+
+		try {
+			fr = new FileReader(file);
+			br = new BufferedReader(fr);
+
+			String s;
+			while ((s = br.readLine()) != null) {
+				String[] items = s.split(",");
+				if (items[0].matches(itemForm) && items.length == 2) {
+					hogeMap.put(items[0], items[1]);
+					hogeSales.put(items[0], 0L);
+
+				} else {
+					System.out.println(formatError);
+					return false;
+				}
+			}
+
+		} catch (IOException e) {
+			System.out.println("予期せぬエラーが発生しました");
+			return false;
+
+		} finally {
+			try {
+				if (br != null) {
+					br.close();
+				}
+			} catch (IOException e) {
+				System.out.println("予期せぬエラーが発生しました");
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
 
