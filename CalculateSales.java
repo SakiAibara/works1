@@ -115,21 +115,23 @@ public class CalculateSales extends Exception {
 
 		for (File rcdFile : dirLists) {
 			if (rcdFile.getName().matches("^\\d{8}.rcd")) {
-
 				rcdList.add(rcdFile);
 			}
 		}
-
+		
 		for (int i = 0; i < rcdList.size(); i++) {
-			File file3 = rcdList.get(i);
-
 			int rcdNumber = Integer.parseInt(rcdList.get(i).getName().substring(0,8));
 
 			if(rcdNumber != i+1){
 				System.out.println("売上ファイル名が連番になっていません");
 				return;
 			}
+		}
 
+		for (int i = 0; i < rcdList.size(); i++) {
+			
+			File file3 = rcdList.get(i);
+			
 			ArrayList<String> InfoList = new ArrayList<String>();
 
 			try {
@@ -175,7 +177,7 @@ public class CalculateSales extends Exception {
 				Long.parseLong(InfoList.get(2));
 
 			} catch (NumberFormatException e) {
-				System.out.println(rcdList.get(i).getName()+"の商品コードが不正です");
+				System.out.println(rcdList.get(i).getName()+"予期せぬエラーが発生しました");
 				return;
 			}
 
@@ -211,8 +213,7 @@ public class CalculateSales extends Exception {
 			}
 		}
 
-
-
+	
 	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
 
 		BufferedWriter bw = null;
