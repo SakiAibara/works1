@@ -48,7 +48,7 @@ public class CalculateSales extends Exception {
 		HashMap<String, String> hogeMap2 = commodityMap;
 		String errorMessage3 = "商品定義ファイルが存在しません";
 		String errorMessage4 = "商品定義ファイルのフォーマットが不正です";
-		
+
 		if(!fileReading(dirPath, fileName, itemForm, hogeSales, hogeMap, errorMessage, errorMessage2) || !fileReading(dirPath, fileName2, itemForm2, hogeSales2, hogeMap2, errorMessage3, errorMessage4)) {
 			return;
 		}
