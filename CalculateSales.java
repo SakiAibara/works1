@@ -32,25 +32,16 @@ public class CalculateSales extends Exception {
 		    return;
 		}
 
-		//支店読み出し
 		String dirPath = args[0];
-		String fileName = "branch.lst";
-		String itemForm = "^[0-9]{3}$";
-		String errorMessage = "支店定義ファイルが存在しません";
-		String errorMessage2 = "支店定義ファイルのフォーマットが不正です";
 
+		//支店読み出し
 		//商品読み出し
-		String fileName2 = "commodity.lst";
-		String itemForm2 = "^[0-9A-Z]{8}$";
-		String errorMessage3 = "商品定義ファイルが存在しません";
-		String errorMessage4 = "商品定義ファイルのフォーマットが不正です";
-
-		if(!fileReading(dirPath, fileName, itemForm, branchSales, branchMap, errorMessage, errorMessage2) || !fileReading(dirPath, fileName2, itemForm2, commoditySales, commodityMap, errorMessage3, errorMessage4)) {
+		if(!fileReading(dirPath, "branch.lst", "^[0-9]{3}$", branchSales, branchMap, "支店") || !fileReading(dirPath, "commodity.lst","^[0-9a-zA-Z]{8}$", commoditySales, commodityMap,"商品")) {
+			System.out.println(fileReading(dirPath, "branch.lst", "^[0-9]{3}$", branchSales, branchMap, "支店"));
 			return;
 		}
 
-
-		File sales = new File(args[0]);
+		File sales = new File(dirPath);
 
 		File[] dirLists = sales.listFiles();
 
@@ -134,27 +125,24 @@ public class CalculateSales extends Exception {
 			commoditySales.put(infoCommodity, totalSalesC);
 
 			if(branchSales.get(infoBranch) > 9999999999L || commoditySales.get(infoCommodity) > 9999999999L) {
-			System.out.println("合計金額が10桁を超えました");
-			return;
-
+				System.out.println("合計金額が10桁を超えました");
+				return;
 			}
+
 		}
 
 		//書き出し
-			String fileName3 = "branch.out";
-			String fileName4 = "commodity.out";
-
-			if(!fileWriting(dirPath,fileName3,branchSales,branchMap) || !fileWriting(dirPath,fileName4,commoditySales,commodityMap)) {
-				return;
-			}
+		if(!fileWriting(dirPath,"branch.out",branchSales,branchMap) || !fileWriting(dirPath,"commodity.out",commoditySales,commodityMap)) {
+			return;
 		}
+	}
 
-	public static boolean fileReading(String dirPath, String fileName, String itemForm, HashMap<String, Long> bcSales, HashMap<String, String> bcMap, String notfoundError, String formatError) {
+	public static boolean fileReading(String dirPath, String fileName, String itemForm, HashMap<String, Long> bcSales, HashMap<String, String> bcMap, String bc) {
 
 		File file = new File(dirPath,fileName);
 
 		if(!file.exists()) {
-			System.out.println(notfoundError);
+			System.out.println(bc + "定義ファイルが存在しません");
 			return false;
 		}
 
@@ -170,7 +158,7 @@ public class CalculateSales extends Exception {
 					bcSales.put(items[0], 0L);
 
 				} else {
-					System.out.println(formatError);
+					System.out.println(bc + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
 			}
