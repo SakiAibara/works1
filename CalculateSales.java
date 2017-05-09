@@ -1,4 +1,4 @@
-package jp.alhinc.saki_aibara.calculate_sales;
+package jp.alhinc.aibara_saki.calculate_sales;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,7 +30,7 @@ public class CalculateSales extends Exception {
 		    return;
 		}
 
-		File file = new File(args[0] + "branch.lst");
+		File file = new File(args[0],"branch.lst");
 
 		FileReader fr = null;
 		BufferedReader br = null;
@@ -75,7 +75,7 @@ public class CalculateSales extends Exception {
 		}
 
 
-		File file2 = new File(args[0] + "commodity.lst");
+		File file2 = new File(args[0],"commodity.lst");
 
 		if(!file2.exists()) {
 			System.out.println("商品定義ファイルが存在しません");
@@ -140,7 +140,7 @@ public class CalculateSales extends Exception {
 				String ss;
 				while ((ss = br.readLine()) != null) {
 					InfoList.add(ss);
-			}
+				}
 
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
@@ -153,23 +153,31 @@ public class CalculateSales extends Exception {
 					}
 				} catch (IOException e) {
 					System.out.println("予期せぬエラーが発生しました");
+				}
 			}
 
 			if(InfoList.size() != 3) {
-				System.out.println("<"+rcdList.get(i).getName()+">のフォーマットが不正です" + InfoList.size());
+				System.out.println(rcdList.get(i).getName()+"のフォーマットが不正です");
 				return;
 			}
 
 			if(!branchSales.containsKey(InfoList.get(0))) {
-				System.out.println("<"+rcdList.get(i).getName()+">の支店コードが不正です");
+				System.out.println(rcdList.get(i).getName()+"の支店コードが不正です");
 				return;
 			}
 
 			if(!commoditySales.containsKey(InfoList.get(1))) {
-				System.out.println("<"+rcdList.get(i).getName()+">の商品コードが不正です");
+				System.out.println(rcdList.get(i).getName()+"の商品コードが不正です");
 				return;
 			}
 
+			try {
+				Long.parseLong(InfoList.get(2));
+
+			} catch (NumberFormatException e) {
+				System.out.println(rcdList.get(i).getName()+"の商品コードが不正です");
+				return;
+			}
 
 			long infoSal = Long.parseLong(InfoList.get(2));
 			String infoBranch = InfoList.get(0);
@@ -185,32 +193,33 @@ public class CalculateSales extends Exception {
 			System.out.println("合計金額が10桁を超えました");
 			return;
 
-
-
 			}
 		}
 
 			String dirPath = args[0];
 
-			String fileName = "\\branch.out";
+			String fileName = "branch.out";
 			HashMap<String, Long> hogeSales = branchSales;
 			HashMap<String, String> hogeMap = branchMap;
-			fileWriting(dirPath,fileName,hogeSales,hogeMap);
 
-			fileName = "\\commodity.out";
-			hogeSales = commoditySales;
-			hogeMap = commodityMap;
-			fileWriting(dirPath,fileName,hogeSales,hogeMap);
+			String fileName2 = "commodity.out";
+			HashMap<String, Long> hogeSales2 = commoditySales;
+			HashMap<String, String> hogeMap2 = commodityMap;
+
+			if(!fileWriting(dirPath,fileName,hogeSales,hogeMap) || !fileWriting(dirPath,fileName2,hogeSales2,hogeMap2)) {
+				return;
+			}
 		}
-	}
+
+
 
 	public static boolean fileWriting(String dirPath, String fileName, HashMap<String, Long> hogeSales, HashMap<String, String> hogeMap) {
 
-		BufferedWriter bw =null;
+		BufferedWriter bw = null;
 
 		try{
 
-			File bo = new File(dirPath + fileName);
+			File bo = new File(dirPath,fileName);
 			bw = new BufferedWriter(new FileWriter(bo));
 
 			List<Map.Entry<String,Long>> array = new ArrayList<Map.Entry<String,Long>>(hogeSales.entrySet());
@@ -235,14 +244,13 @@ public class CalculateSales extends Exception {
 			try {
 				if (bw != null) {
 					bw.close();
-					return true;
 				}
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return false;
 			}
 		}
-		return false;
+		return true;
 
 	}
 }
