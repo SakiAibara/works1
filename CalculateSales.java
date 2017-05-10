@@ -104,10 +104,7 @@ public class CalculateSales {
 				return;
 			}
 
-			try {
-				Long.parseLong(infoList.get(2));
-
-			} catch (NumberFormatException e) {
+			if (!infoList.get(2).matches("^[0-9]{1,}$")) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
 			}
@@ -123,14 +120,14 @@ public class CalculateSales {
 				System.out.println("合計金額が10桁を超えました");
 				return;
 			}
-			
+
 			branchSales.put(infoBranch, branchTotal);
 			commoditySales.put(infoCommodity, commodityTotal);
-			
+
 		}
 
 		//書き出し
-		if (!fileWriting(dirPath, "branch.out", branchSales, branchMap) || 
+		if (!fileWriting(dirPath, "branch.out", branchSales, branchMap) ||
 			!fileWriting(dirPath, "commodity.out", commoditySales, commodityMap)) {
 			return;
 		}
@@ -152,14 +149,12 @@ public class CalculateSales {
 			String s;
 			while ((s = br.readLine()) != null) {
 				String[] items = s.split(",");
-				if (items.length == 2 && items[0].matches(fileNameForm)) {
-					bcMap.put(items[0],items[1]);
-					bcSales.put(items[0],0L);
-
-				} else {
+				if (items.length != 2 || !items[0].matches(fileNameForm)) {
 					System.out.println(bc + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
+				bcMap.put(items[0],items[1]);
+				bcSales.put(items[0],0L);
 			}
 
 		} catch (IOException e) {
